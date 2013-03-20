@@ -138,7 +138,17 @@ module Airbrake
       find_session_data
       clean_params
       clean_rack_request_data
+      clean_sensative_environment_data
     end
+
+    def clean_sensative_environment_data
+      return if cgi_data.nil?
+
+      ENV.each do |key, _|
+        cgi_data.delete(key)
+        cgi_data.delete(key.to_sym)
+      end
+   end
 
     # Converts the given notice to XML
     def to_xml

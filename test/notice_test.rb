@@ -487,4 +487,19 @@ class NoticeTest < Test::Unit::TestCase
     notice = build_notice(:exception => exception,:error_message => "Random ponies")
     assert_equal "BacktracedException: Random ponies", notice.error_message
   end
+
+  should "remove any environment data" do
+    data = {
+      "some_data" => 'meow',
+      "HYPER_SENSATIVE_DATABASE_URL" => 'My database URL'
+    }
+
+    ENV['HYPER_SENSATIVE_DATABASE_URL'] = 'My database URL'
+
+    notice = build_notice(:cgi_data => data)
+    assert_equal data.except("HYPER_SENSATIVE_DATABASE_URL"), notice.cgi_data, "should remove environment data"
+
+    # Be a good citizen--clean up after yourself.
+    ENV.delete('hyper_sensative_database_url')
+  end
 end
